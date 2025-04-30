@@ -1,5 +1,6 @@
 import pytest
-from census_viz.client.tiger import TigerClient
+
+from abheile.client.tiger import TigerClient
 
 
 @pytest.fixture

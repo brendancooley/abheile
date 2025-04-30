@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field, computed_field
-from typing import Optional
 
 
 class GeographicArea(BaseModel):
@@ -18,7 +17,7 @@ class PopulationData(BaseModel):
     age_5_to_9: int = Field(..., description="Population 5 to 9 years")
     age_10_to_14: int = Field(..., description="Population 10 to 14 years")
     age_15_to_17: int = Field(..., description="Population 15 to 17 years")
-    median_income: Optional[int] = Field(None, description="Median household income")
+    median_income: int | None = Field(None, description="Median household income")
 
     @computed_field
     def under_18(self) -> int:

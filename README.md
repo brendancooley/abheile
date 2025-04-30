@@ -1,6 +1,6 @@
-# Census Viz
+# abheile
 
-A Python tool for collecting and visualizing US Census data at the block group level.
+A Python tool for collecting economic and demographic data and visualizing their spatial distribution.
 
 ## Configuration
 

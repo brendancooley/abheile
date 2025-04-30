@@ -1,18 +1,19 @@
 import asyncio
-import typer
 from pathlib import Path
-from .collector import DataCollector
-from .client import CensusClient
-from .viz.maps import CensusMapper
+
 import rich
-from typing import Optional
-from .constants import STATE_CENTERS, DEFAULT_CENTER, DEMOGRAPHIC_VARS
+import typer
+
+from abheile.client import CensusClient
+from abheile.collector import DataCollector
+from abheile.constants import DEFAULT_CENTER, DEMOGRAPHIC_VARS, STATE_CENTERS
+from abheile.viz.maps import CensusMapper
 
 app = typer.Typer()
 
 
 @app.command()
-def map(
+def build_map(
     state: str = typer.Argument(
         ..., help="State FIPS code (e.g., '06' for California)"
     ),
@@ -33,12 +34,12 @@ def map(
         dir_okay=True,
         file_okay=False,
     ),
-    center_lat: Optional[float] = typer.Option(
+    center_lat: float | None = typer.Option(
         None,
         "--lat",
         help="Center latitude (defaults to state center)",
     ),
-    center_lon: Optional[float] = typer.Option(
+    center_lon: float | None = typer.Option(
         None,
         "--lon",
         help="Center longitude (defaults to state center)",
@@ -101,7 +102,7 @@ def collect(
     """Collect Census data for a state and store it in a Delta table"""
     table_path.parent.mkdir(parents=True, exist_ok=True)
 
-    async def run():
+    async def run() -> None:
         collector = DataCollector(table_path)
         try:
             await collector.update_state(state, year)
@@ -117,7 +118,7 @@ def lookup_state(
 ) -> None:
     """Look up a state's FIPS code by name"""
 
-    async def run():
+    async def run() -> None:
         client = CensusClient()
         try:
             states = await client.get_states()

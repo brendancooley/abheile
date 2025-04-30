@@ -174,3 +174,4 @@ cython_debug/
 .python-version
 .DS_STORE
 data
+_nb

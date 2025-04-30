@@ -1,14 +1,15 @@
-import folium
 import json
-import branca.colormap as cm
 from pathlib import Path
+
+import branca.colormap as cm
+import folium
 import polars as pl
 
 
 class CensusMapper:
     """Creates interactive census visualizations"""
 
-    def __init__(self, demo_table_path: str, geo_table_path: str, state: str):
+    def __init__(self, demo_table_path: str, geo_table_path: str, state: str) -> None:
         """
         Initialize the mapper
 
@@ -73,10 +74,7 @@ class CensusMapper:
             vmax=values.max(),
         )
 
-        if filters:
-            df = self.df.filter(*filters)
-        else:
-            df = self.df
+        df = self.df.filter(*filters) if filters else self.df
 
         # Add GeoJSON layer
         folium.GeoJson(
@@ -119,6 +117,6 @@ class CensusMapper:
 
         return m
 
-    def save_map(self, map_obj: folium.Map, output_path: str | Path):
+    def save_map(self, map_obj: folium.Map, output_path: str | Path) -> None:
         """Save map to HTML file"""
         map_obj.save(str(output_path))

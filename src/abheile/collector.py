@@ -1,11 +1,11 @@
-from typing import Optional
-import polars as pl
-from deltalake import DeltaTable
-from pathlib import Path
 import asyncio
-from census_viz.client import CensusClient, TigerClient
-from datetime import datetime
 import json
+from datetime import datetime
+from pathlib import Path
+
+import polars as pl
+from census_viz.client import CensusClient, TigerClient
+from deltalake import DeltaTable
 
 
 class DataCollector:
@@ -14,9 +14,9 @@ class DataCollector:
     def __init__(
         self,
         table_path: str | Path,
-        client: Optional[CensusClient] = None,
-        tiger_client: Optional[TigerClient] = None,
-    ):
+        client: CensusClient | None = None,
+        tiger_client: TigerClient | None = None,
+    ) -> None:
         """
         Initialize the collector
 
@@ -138,7 +138,7 @@ class DataCollector:
                 },
             ).when_matched_update_all().when_not_matched_insert_all().execute()
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the client connections"""
         await self.client.close()
         await self.tiger_client.close()

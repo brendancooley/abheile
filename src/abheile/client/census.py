@@ -1,7 +1,7 @@
-from typing import List, Optional
 import httpx
-from census_viz.models import CensusResponse, GeographicArea, PopulationData
-from census_viz.config import settings
+
+from abheile.config import settings
+from abheile.models import CensusResponse, GeographicArea, PopulationData
 
 
 class CensusAPIError(Exception):
@@ -15,7 +15,7 @@ class CensusClient:
 
     def __init__(
         self, api_key: str | None = None, base_url: str = "https://api.census.gov/data"
-    ):
+    ) -> None:
         self.api_key = api_key or settings.census_api_key
         self.base_url = base_url
         self._client = httpx.AsyncClient()
@@ -23,9 +23,9 @@ class CensusClient:
     async def get_population_data(
         self,
         year: int = 2021,
-        state: Optional[str] = None,
-        county: Optional[str] = None,
-    ) -> List[CensusResponse]:
+        state: str | None = None,
+        county: str | None = None,
+    ) -> list[CensusResponse]:
         """
         Fetch population and income data from the ACS 5-year estimates.
 
@@ -79,7 +79,8 @@ class CensusClient:
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 404:
                 raise CensusAPIError(
-                    f"Census API endpoint not found. The {year} ACS 5-year estimates might not be available."
+                    f"Census API endpoint not found. The {year} ACS 5-year estimates "
+                    f"might not be available."
                 ) from e
             elif e.response.status_code == 400:
                 raise CensusAPIError(
@@ -173,7 +174,8 @@ class CensusClient:
                 raise CensusAPIError("Census API returned empty or invalid data")
 
             # Extract county codes from response
-            # Response format is [["NAME", "state", "county"], ["County Name", "06", "001"], ...]
+            # Response format is [["NAME", "state", "county"],
+            # ["County Name", "06", "001"], ...]
             return [row[2] for row in data[1:]]
 
         except httpx.HTTPStatusError as e:
@@ -224,6 +226,6 @@ class CensusClient:
                 raise CensusAPIError("Invalid API key") from e
             raise
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the HTTP client"""
         await self._client.aclose()

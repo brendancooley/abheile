@@ -1,7 +1,7 @@
-from typing import Optional
-import httpx
-from pathlib import Path
 import json
+from pathlib import Path
+
+import httpx
 
 
 class TigerClient:
@@ -10,8 +10,8 @@ class TigerClient:
     def __init__(
         self,
         base_url: str = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer",
-        cache_dir: Optional[Path] = None,
-    ):
+        cache_dir: Path | None = None,
+    ) -> None:
         self.base_url = base_url
         self.cache_dir = cache_dir or Path("./data/tiger")
         self._client = httpx.AsyncClient()
@@ -71,10 +71,11 @@ class TigerClient:
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 404:
                 raise ValueError(
-                    f"No TIGER/Line data found for state {state}, county {county}, year {year}"
+                    f"No TIGER/Line data found for state {state}, county {county}, "
+                    f"year {year}"
                 ) from e
             raise
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the HTTP client"""
         await self._client.aclose()
